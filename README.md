@@ -74,5 +74,3 @@ If you appreciate our plugins and support, consider donating and showin' us some
 
 ### Contact Us
 If you have a problem please create a ticket and include the error (if there was one). Feel free to join the Discord Server linked above! I'm super active there and tend to respond faster on it.
-
----
