@@ -1,8 +1,8 @@
 name: ODStructureCondition
-authors: [CoolLord22]
+authors: [ CoolLord22 ]
 api-version: 1.17
 main: com.coollord22.structurecondition.StructureCondition
 version: ${project.parent.version}
 description: OtherDrops add-on for Structure Checking
 load: POSTWORLD
-depend: [OtherDrops]
+depend: [ OtherDrops ]
