@@ -55,17 +55,7 @@ public class StructureCheckv1_18_R2 extends StructureCheck {
 
     @Override
     public List<Condition> parse(ConfigurationNode configurationNode) {
-        Set<String> temp = OtherDropsConfig.parseStructuresFrom(configurationNode);
-        if (temp == null || temp.isEmpty())
-            return null;
-
-        Set<String> result = new HashSet<>();
-        for (String entry : temp) {
-            if (getStructureType(entry) != null) {
-                result.add(entry);
-            }
-        }
-
+        Set<String> result = getStructureSet(configurationNode);
         List<Condition> conditionList = new ArrayList<>();
         conditionList.add(new StructureCheckv1_18_R2(result));
         return conditionList;
