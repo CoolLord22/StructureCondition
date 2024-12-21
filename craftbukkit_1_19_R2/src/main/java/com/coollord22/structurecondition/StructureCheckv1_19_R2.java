@@ -66,6 +66,11 @@ public class StructureCheckv1_19_R2 extends StructureCheck {
         return conditionList;
     }
 
+    @Override
+    boolean validStructure(String structure) {
+        return getStructureType(structure) != null;
+    }
+
     private org.bukkit.generator.structure.Structure getStructureType(String structureType) {
         return switch (structureType.toUpperCase()) {
             case "PILLAGER_OUTPOST" -> org.bukkit.generator.structure.Structure.PILLAGER_OUTPOST;

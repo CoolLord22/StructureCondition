@@ -29,4 +29,5 @@ public abstract class StructureCheck extends Condition {
     }
 
     abstract boolean isPartOfNaturalStructure(Location location);
+    abstract boolean validStructure(String structure);
 }

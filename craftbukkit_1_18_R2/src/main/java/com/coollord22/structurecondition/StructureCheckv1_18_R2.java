@@ -71,6 +71,11 @@ public class StructureCheckv1_18_R2 extends StructureCheck {
         return conditionList;
     }
 
+    @Override
+    boolean validStructure(String structure) {
+        return getStructureType(structure) != null;
+    }
+
     private StructureType getStructureType(String structureType) {
         return switch (structureType.toUpperCase()) {
             case "PILLAGER_OUTPOST" -> StructureType.PILLAGER_OUTPOST;

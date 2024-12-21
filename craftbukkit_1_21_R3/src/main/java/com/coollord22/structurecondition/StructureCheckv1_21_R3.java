@@ -66,6 +66,11 @@ public class StructureCheckv1_21_R3 extends StructureCheck {
         conditionList.add(new StructureCheckv1_21_R3(result));
         return conditionList;
     }
+    
+    @Override
+    boolean validStructure(String structure) {
+        return getStructureType(structure) != null;
+    }
 
     private org.bukkit.generator.structure.Structure getStructureType(String structureType) {
         return switch (structureType.toUpperCase()) {
