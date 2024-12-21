@@ -15,25 +15,23 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.CraftChunk;
 import org.bukkit.util.StructureSearchResult;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StructureCheckv1_20_R1 extends StructureCheck {
-    public StructureCheckv1_20_R1(Map<String, Boolean> structureMap) {
-        super(structureMap);
+    public StructureCheckv1_20_R1(Set<String> structureSet) {
+        super(structureSet);
     }
 
     @Override
     boolean isPartOfNaturalStructure(Location location) {
         try {
-            for(Map.Entry<String, Boolean> entry : structureMap.entrySet()) {
-                if(getStructureType(entry.getKey()) != null) {
-                    Log.logInfo("Searching for nearest " + entry.getKey(), Verbosity.HIGHEST);
-                    StructureSearchResult searchResult = location.getWorld().locateNearestStructure(location, getStructureType(entry.getKey()), 5, false);
-                    if(searchResult != null) {
+            for (String entry : structureSet) {
+                if (getStructureType(entry) != null) {
+                    Log.logInfo("Searching for nearest " + entry, Verbosity.HIGHEST);
+                    StructureSearchResult searchResult = location.getWorld().locateNearestStructure(location, getStructureType(entry), 5, false);
+                    if (searchResult != null) {
                         IChunkAccess craftChunk = ((CraftChunk) searchResult.getLocation().getChunk()).getHandle(ChunkStatus.n);
-                        for(Map.Entry<Structure, StructureStart> structureEntry : craftChunk.g().entrySet()) {
+                        for (Map.Entry<Structure, StructureStart> structureEntry : craftChunk.g().entrySet()) {
                             for (StructurePiece piece : structureEntry.getValue().i()) {
                                 if (piece.f().b(new BaseBlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()))) {
                                     Log.logInfo("Location was found in structure bounding box!", Verbosity.HIGHEST);
@@ -53,9 +51,17 @@ public class StructureCheckv1_20_R1 extends StructureCheck {
 
     @Override
     public List<Condition> parse(ConfigurationNode configurationNode) {
-        Map<String, Boolean> result = OtherDropsConfig.parseStructuresFrom(configurationNode);
-        if(result == null || result.isEmpty())
+        Set<String> temp = OtherDropsConfig.parseStructuresFrom(configurationNode);
+        if (temp == null || temp.isEmpty())
             return null;
+
+        Set<String> result = new HashSet<>();
+        for (String entry : temp) {
+            if (getStructureType(entry) != null) {
+                result.add(entry);
+            }
+        }
+
         List<Condition> conditionList = new ArrayList<>();
         conditionList.add(new StructureCheckv1_20_R1(result));
         return conditionList;

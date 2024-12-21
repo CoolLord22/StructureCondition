@@ -15,25 +15,26 @@ import org.bukkit.StructureType;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public class StructureCheckv1_17_R1 extends StructureCheck {
-    public StructureCheckv1_17_R1(Map<String, Boolean> structureMap) {
-        super(structureMap);
+    public StructureCheckv1_17_R1(Set<String> structureSet) {
+        super(structureSet);
     }
 
     @Override
     boolean isPartOfNaturalStructure(Location location) {
         try {
-            for(Map.Entry<String, Boolean> entry : structureMap.entrySet()) {
-                if(getStructureGenerator(entry.getKey()) != null) {
-                    Log.logInfo("Searching for nearest " + entry.getKey(), Verbosity.HIGHEST);
-                    Location closestStructure = location.getWorld().locateNearestStructure(location, getStructureType(entry.getKey()), 5, false);
+            for (String entry : structureSet) {
+                if (getStructureGenerator(entry) != null) {
+                    Log.logInfo("Searching for nearest " + entry, Verbosity.HIGHEST);
+                    Location closestStructure = location.getWorld().locateNearestStructure(location, getStructureType(entry), 5, false);
                     World world = ((CraftWorld) closestStructure.getWorld()).getHandle();
                     Chunk chunk = world.getChunkAt(closestStructure.getChunk().getX(), closestStructure.getChunk().getZ());
-                    if (chunk.a(getStructureGenerator(entry.getKey())) != null) {
-                        for (StructurePiece piece : chunk.a(getStructureGenerator(entry.getKey())).d()) {
+                    if (chunk.a(getStructureGenerator(entry)) != null) {
+                        for (StructurePiece piece : chunk.a(getStructureGenerator(entry)).d()) {
                             if (piece.f().b(new BaseBlockPosition(location.getX(), location.getY(), location.getZ()))) {
                                 Log.logInfo("Location was found in structure bounding box!", Verbosity.HIGHEST);
                                 return true;
@@ -51,9 +52,17 @@ public class StructureCheckv1_17_R1 extends StructureCheck {
 
     @Override
     public List<Condition> parse(ConfigurationNode configurationNode) {
-        Map<String, Boolean> result = OtherDropsConfig.parseStructuresFrom(configurationNode);
-        if(result == null || result.isEmpty())
+        Set<String> temp = OtherDropsConfig.parseStructuresFrom(configurationNode);
+        if (temp == null || temp.isEmpty())
             return null;
+
+        Set<String> result = new HashSet<>();
+        for (String entry : temp) {
+            if (getStructureType(entry) != null) {
+                result.add(entry);
+            }
+        }
+
         List<Condition> conditionList = new ArrayList<>();
         conditionList.add(new StructureCheckv1_17_R1(result));
         return conditionList;
@@ -89,7 +98,7 @@ public class StructureCheckv1_17_R1 extends StructureCheck {
     }
 
     private StructureGenerator<?> getStructureGenerator(String structureType) {
-        return switch(structureType.toUpperCase()) {
+        return switch (structureType.toUpperCase()) {
             case "PILLAGER_OUTPOST" -> StructureGenerator.b; // Corresponds to "Pillager_Outpost"
             case "MINESHAFT" -> StructureGenerator.c; // Corresponds to "Mineshaft"
             case "MANSION" -> StructureGenerator.d; // Corresponds to "Mansion"
